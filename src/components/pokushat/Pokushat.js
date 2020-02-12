@@ -22,12 +22,10 @@ export default class App extends React.Component {
 
   setCoords = () => {
     if (!this.state.places)
-      getCoords().then(
-        places => !this.state.places && this.setState({ places })
-      );
+      getCoords().then((places) => !this.state.places && this.setState({ places }));
   };
 
-  handleApiAvaliable = ymaps => {
+  handleApiAvaliable = (ymaps) => {
     // this.setCoords();
     this.ymaps = ymaps;
     this.setState({ ...this.state, ready: true });
@@ -42,13 +40,10 @@ export default class App extends React.Component {
 
     const destination = findNearest(
       { latitude, longitude },
-      this.state.vegagoPoints.map(
-        ({
-          geometry: {
-            coordinates: [latitude, longitude],
-          },
-        }) => ({ latitude, longitude })
-      )
+      this.state.vegagoPoints.map(({ geometry: { coordinates: [latitude, longitude] } }) => ({
+        latitude,
+        longitude,
+      }))
     );
 
     const route = new this.ymaps.multiRouter.MultiRoute(
@@ -73,36 +68,27 @@ export default class App extends React.Component {
   };
 
   render() {
+    const { mapState, vegagoPoints, ready } = this.state;
     return (
       <div className="App">
         <div className="layer">
           <YMaps query={{ apikey: 'a37ce737-cfc2-4b5c-b93a-a0b0b21800cd' }}>
             <Map
-              state={this.state.mapState}
-              instanceRef={ref => (this.map = ref)}
+              state={mapState}
+              instanceRef={(ref) => (this.map = ref)}
               height="70vh"
               width="100%"
               onLoad={this.handleApiAvaliable}
               modules={['geolocation', 'multiRouter.MultiRoute']}
             >
-              <Clusterer
-                options={{
-                  preset: 'islands#darkGreenClusterIcons',
-                }}
-              >
-                {this.state.vegagoPoints.map((point, index) => (
-                  <Placemark key={index} {...point} />
-                ))}
+              <Clusterer options={{ preset: 'islands#darkGreenClusterIcons' }}>
+                {vegagoPoints
+                  .map((point) => ({ ...point, key: point.properties.balloonContent }))
+                  .map(Placemark)}
               </Clusterer>
             </Map>
           </YMaps>
-          <Button
-            disabled={!this.state.ready}
-            my={1}
-            primary
-            emphasized
-            onClick={this.findQushat}
-          >
+          <Button disabled={!ready} my={1} primary emphasized onClick={this.findQushat}>
             Кушац
           </Button>
         </div>
