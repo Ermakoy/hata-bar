@@ -26,9 +26,7 @@ export const Contacts = () => (
       <a href="https://github.com/ermakoy">Гитхаб</a>
     </ContactsItem>
     <ContactsItem>
-      <a href="https://www.notion.so/ermakoy/JavaScript-33c16db5802049f6abf1a3d1d28b1f48">
-        Резюме
-      </a>
+      <a href="https://vk.cc/asLeHO">Резюме</a>
     </ContactsItem>
   </ul>
 );
