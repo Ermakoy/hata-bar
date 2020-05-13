@@ -6,6 +6,10 @@ const WEEKS_IN_YEAR = 52;
 const WEEK = 1000 * 60 * 60 * 24 * 7;
 const YEARS_I_THINK_I_WILL_LIVE = 65;
 
+const getWeekNumberText = weekNumber =>
+  `Номер недели: ${(weekNumber % 52) + 1}
+Год: ${Math.trunc(weekNumber / 52)}`;
+
 const Timeline = props => {
   const now = new Date();
   const passedWeeks = (now - BIRTH_DATE) / WEEK;
@@ -14,7 +18,11 @@ const Timeline = props => {
     <TimelineContainer>
       {Array.from({ length: WEEKS_IN_YEAR * YEARS_I_THINK_I_WILL_LIVE }).map(
         (_, weekNumber) => (
-          <Week key={weekNumber} passed={weekNumber < passedWeeks} />
+          <Week
+            title={getWeekNumberText(weekNumber)}
+            key={weekNumber}
+            passed={weekNumber < passedWeeks}
+          />
         )
       )}
     </TimelineContainer>
