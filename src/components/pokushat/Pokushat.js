@@ -23,33 +23,42 @@ export default class App extends React.Component {
 
   setCoords = () => {
     if (!this.state.places)
-      getCoords().then((places) => !this.state.places && this.setState({ places }));
+      getCoords().then(
+        places => !this.state.places && this.setState({ places })
+      );
   };
 
-  handleApiAvaliable = (ymaps) => {
+  handleApiAvaliable = ymaps => {
     // this.setCoords();
     this.ymaps = ymaps;
     this.setState({ ...this.state, ready: true });
   };
 
   findQushat = async () => {
-    this.setState({isSearching: true})
+    this.setState({ isSearching: true });
     const {
       geoObjects: {
         position: [latitude, longitude],
       },
     } = await this.ymaps.geolocation.get();
-    this.setState({ isSearching: false })
+    this.setState({ isSearching: false });
     const nearestPoints = orderByDistance(
       { latitude, longitude },
-      this.state.vegagoPoints.map(({ geometry: { coordinates: [latitude, longitude] }, ...rest }) => ({
-        latitude,
-        longitude,
-        ...rest
-      }))
+      this.state.vegagoPoints.map(
+        ({
+          geometry: {
+            coordinates: [latitude, longitude],
+          },
+          ...rest
+        }) => ({
+          latitude,
+          longitude,
+          ...rest,
+        })
+      )
     ).slice(0, 3);
 
-    this.setState({ nearestPoints, userPosition: { latitude, longitude } })
+    this.setState({ nearestPoints, userPosition: { latitude, longitude } });
 
     const [destination] = nearestPoints;
 
@@ -75,39 +84,67 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { mapState, vegagoPoints, ready, nearestPoints, userPosition, isSearching } = this.state;
+    const {
+      mapState,
+      vegagoPoints,
+      nearestPoints,
+      userPosition,
+      isSearching,
+    } = this.state;
     return (
-      <div className="App">
-        <div className="layer">
-          <div style={{height:"70vh", width:"100%"}}>
+      <div className='App'>
+        <div className='layer'>
+          <div style={{ height: '70vh', width: '100%' }}>
             <YMaps query={{ apikey: 'a37ce737-cfc2-4b5c-b93a-a0b0b21800cd' }}>
-            <Map
-              state={mapState}
-              instanceRef={(ref) => (this.map = ref)}
-              height="70vh"
-              width="100%"
-              onLoad={this.handleApiAvaliable}
-              modules={['geolocation', 'multiRouter.MultiRoute']}
-            >
-              <Clusterer options={{ preset: 'islands#darkGreenClusterIcons' }}>
-                {vegagoPoints
-                  .map((point) => ({ ...point, key: point.properties.balloonContent }))
-                  .map(Placemark)}
-              </Clusterer>
-            </Map>
-          </YMaps>
+              <Map
+                state={mapState}
+                instanceRef={ref => (this.map = ref)}
+                height='70vh'
+                width='100%'
+                onLoad={this.handleApiAvaliable}
+                modules={['geolocation', 'multiRouter.MultiRoute']}
+              >
+                <Clusterer
+                  options={{ preset: 'islands#darkGreenClusterIcons' }}
+                >
+                  {vegagoPoints
+                    .map(point => ({
+                      ...point,
+                      key: point.properties.balloonContent,
+                    }))
+                    .map(Placemark)}
+                </Clusterer>
+              </Map>
+            </YMaps>
           </div>
-          <Button disabled={isSearching} my={1} primary emphasized onClick={this.findQushat}>
+          <Button
+            disabled={isSearching}
+            my={1}
+            primary
+            emphasized
+            onClick={this.findQushat}
+          >
             {isSearching ? 'Ищем' : 'Кушац'}
           </Button>
           {nearestPoints && (
             <>
               <Txt>Ближайшие к вам заведения:</Txt>
               <List m={1} ordered>
-                {nearestPoints.map((place) => (
+                {nearestPoints.map(place => (
                   <Txt>
-                    <div dangerouslySetInnerHTML={{ __html: place.properties.balloonContent }} />
-                    <Txt>{[getDistance(userPosition, place, 10)].map(distance => distance > 1000 ? (distance / 1000) + ' километров' : distance + ' метров')} от вас</Txt>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: place.properties.balloonContent,
+                      }}
+                    />
+                    <Txt>
+                      {[getDistance(userPosition, place, 10)].map(distance =>
+                        distance > 1000
+                          ? distance / 1000 + ' километров'
+                          : distance + ' метров'
+                      )}{' '}
+                      от вас
+                    </Txt>
                   </Txt>
                 ))}
               </List>

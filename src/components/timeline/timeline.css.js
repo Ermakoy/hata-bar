@@ -1,4 +1,44 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
+
+const rainbow = keyframes`
+  100%,0%{
+			background-color: ${p =>
+        p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
+  }
+  8%{
+    background-color: rgb(255,127,0);
+  }
+  16%{
+    background-color: rgb(255,255,0);
+  }
+  25%{
+    background-color: rgb(127,255,0);
+  }
+  33%{
+    background-color: rgb(0,255,0);
+  }
+  41%{
+    background-color: rgb(0,255,127);
+  }
+  50%{
+    background-color: rgb(0,255,255);
+  }
+  58%{
+    background-color: rgb(0,127,255);
+  }
+  66%{
+    background-color: rgb(0,0,255);
+  }
+  75%{
+    background-color: rgb(127,0,255);
+  }
+  83%{
+    background-color: rgb(255,0,255);
+  }
+  91%{
+    background-color: rgb(255,0,127);
+  }
+`;
 
 export const TimelineContainer = styled.div`
   counter-reset: year;
@@ -25,6 +65,17 @@ export const Week = styled.div`
     background: ${p =>
       p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
   }
+
+  ${p =>
+    p.passed
+      ? css`
+          &:hover {
+            &::before {
+              animation: ${rainbow} 2s linear infinite;
+            }
+          }
+        `
+      : ''}
 
   &::after {
     position: absolute;
