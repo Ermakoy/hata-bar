@@ -40,6 +40,12 @@ const rainbow = keyframes`
   }
 `;
 
+export const Month = styled.div`
+  @media (min-width: 480px) {
+    grid-gap: 2px;
+  }
+`;
+
 export const TimelineContainer = styled.div`
   counter-reset: year;
   display: grid;
@@ -55,8 +61,10 @@ export const TimelineContainer = styled.div`
 
 export const Week = styled.div`
   position: relative;
-  display: block;
-
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  padding-right: 5px;
   &::before {
     content: '';
     display: block;
