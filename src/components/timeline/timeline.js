@@ -46,10 +46,10 @@ const Timeline = () => {
           locale: ru,
         });
         return (
-          <div style={{ display: 'flex' }}>
-            <div style={{ width: 70 }}>
-              {monthName.slice(0, 1).toUpperCase() + monthName.slice(1)}
-            </div>
+          <div>
+            <span style={{ width: 70 }}>
+              {monthName[0].toUpperCase().concat(monthName.slice(1))}
+            </span>
             <Month daysNumber={month.length}>
               {month.map(day => (
                 <Week

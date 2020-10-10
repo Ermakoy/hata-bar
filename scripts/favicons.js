@@ -37,7 +37,7 @@ const configuration = {
     favicons: true,
     firefox: false,
     windows: true,
-    yandex: false,
+    yandex: true,
   },
 };
 

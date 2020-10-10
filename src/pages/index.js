@@ -20,7 +20,7 @@ const Page = ({ data }) => {
 export default Page;
 
 export const query = graphql`
-  query TimelineQuery {
+  query timelineQuery {
     timelineJson {
       content {
         childMarkdownRemark {

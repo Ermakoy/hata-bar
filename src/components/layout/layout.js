@@ -33,34 +33,4 @@ Layout.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-const LayoutWithQuery = props => (
-  <StaticQuery
-    query={graphql`
-      query LayoutQuery {
-        site {
-          siteMetadata {
-            siteTitle
-          }
-        }
-        avatar: file(relativePath: { eq: "images/avatar.jpg" }) {
-          childImageSharp {
-            fixed(width: 80, height: 80) {
-              base64
-              src
-              srcSet
-              height
-              width
-            }
-          }
-        }
-      }
-    `}
-    render={data => <Layout data={data} {...props} />}
-  />
-);
-
-LayoutWithQuery.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-export default LayoutWithQuery;
+export default Layout;
