@@ -20,14 +20,8 @@ const Layout = ({ data, children }) => (
     <Provider>
       <ThemeProvider theme={theme}>
         <Container>
-          <Header
-            avatar={data.avatar.childImageSharp.fixed}
-            title={data.site.siteMetadata.siteTitle}
-          />
           <Content>{children}</Content>
-          <Footer>
-            <Contacts />
-          </Footer>
+          <Footer />
         </Container>
       </ThemeProvider>
     </Provider>
