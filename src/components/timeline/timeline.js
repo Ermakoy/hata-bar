@@ -3,6 +3,7 @@ import { isPast, getDaysInMonth, format } from 'date-fns';
 import { Button } from 'rendition';
 import { enGB, eo, ru } from 'date-fns/locale';
 import { TimelineContainer, Week, Month } from './timeline.css';
+import firebase from 'gatsby-plugin-firebase';
 
 const BIRTH_DATE = new Date('1999-03-25');
 const WEEKS_IN_YEAR = 52;
@@ -26,10 +27,28 @@ const Timeline = props => {
   const months = Array.from({ length: 12 }).map((el, monthNumber) => {
     const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
     return Array.from({ length: daysCount }).map(
-      (day, daysNumber) =>
-        console.log(daysNumber) || new Date(startYear, monthNumber, daysNumber)
+      (day, daysNumber) => new Date(startYear, monthNumber, daysNumber)
     );
   });
+  const database = firebase.database();
+  const info = database.ref('beerDrinkDays');
+  let beerDrinkDays = [];
+
+  info.on('value', snapshot => {
+    if (snapshot.val()) {
+      beerDrinkDays = snapshot.val()
+    }
+    console.log('2', beerDrinkDays);
+  });
+
+  const onClickHandler = () => {
+    console.log('1', beerDrinkDays);
+    const now = Date.now();
+    beerDrinkDays.length > 0
+      ? database.ref().update({'beerDrinkDays': [...beerDrinkDays, now]})
+      : database.ref('beerDrinkDays').set([now]);
+  }
+
   return (
     <>
       {months.map((month, monthNumber) => (
@@ -44,7 +63,7 @@ const Timeline = props => {
           </Month>
         </div>
       ))}
-      <Button>Do stuff</Button>
+      <Button onClick={onClickHandler}>Do stuff</Button>
     </>
   );
 };
