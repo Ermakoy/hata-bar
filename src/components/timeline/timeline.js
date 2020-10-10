@@ -1,9 +1,14 @@
-import React from 'react';
-import { isPast, getDaysInMonth, format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { isPast, getDaysInMonth, format, isSameDay } from 'date-fns';
 import { Button } from 'rendition';
 import { ru } from 'date-fns/locale';
 import { Week, Month } from './timeline.css';
 import firebase from 'gatsby-plugin-firebase';
+
+import lazyApp from 'firebase/app';
+import lazyDatabase from 'firebase/database';
+
+import { getFirebase } from 'helpers/firebase';
 
 const startYear = 2020;
 
@@ -14,42 +19,49 @@ const Timeline = () => {
       (day, daysNumber) => new Date(startYear, monthNumber, daysNumber)
     );
   });
-  const database = firebase.database();
-  const info = database.ref('beerDrinkDays');
-  let beerDrinkDays = [];
-
-  info.on('value', snapshot => {
-    if (snapshot.val()) {
-      beerDrinkDays = snapshot.val()
-    }
-  });
-
-  const onClickHandler = () => {
-    const now = Date.now();
-    beerDrinkDays.length > 0
-      ? database.ref().update({'beerDrinkDays': [...beerDrinkDays, now]})
-      : database.ref('beerDrinkDays').set([now]);
-  }
-
+  let onClickHandler;
+  const [beerDrinkDays, setBeerDrinkDays] = useState([]);
+  useEffect(() => {
+    Promise.all([lazyApp, lazyDatabase]).then(([firebase]) => {
+      const database = firebase.database();
+      const info = database.ref('beerDrinkDays');
+      info.on('value', snapshot => {
+        if (snapshot.val()) {
+          setBeerDrinkDays(snapshot.val());
+        }
+      });
+      onClickHandler = () => {
+        const now = Date.now();
+        beerDrinkDays.length > 0
+          ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
+          : database.ref('beerDrinkDays').set([now]);
+      };
+    });
+  }, []);
+  console.log(beerDrinkDays);
   return (
     <>
-      {
-        months.map((month, monthNumber) => {
-          const monthName = format(new Date(startYear, monthNumber), 'LLLL', { locale: ru });
-          return (
-            <div style={{ display: 'flex' }}>
-              <div style={{ width: 70 }}>
-                {monthName.slice(0, 1).toUpperCase() + monthName.slice(1)}
-              </div>
-              <Month daysNumber={month.length}>
-                {month.map(day => (
-                  <Week passed={isPast(day)} />
-                ))}
-              </Month>
+      {months.map((month, monthNumber) => {
+        const monthName = format(new Date(startYear, monthNumber), 'LLLL', {
+          locale: ru,
+        });
+        return (
+          <div style={{ display: 'flex' }}>
+            <div style={{ width: 70 }}>
+              {monthName.slice(0, 1).toUpperCase() + monthName.slice(1)}
             </div>
-          )
-        })
-      }
+            <Month daysNumber={month.length}>
+              {month.map(day => (
+                <Week
+                  passed={beerDrinkDays.some(drinkDay =>
+                    isSameDay(drinkDay, day)
+                  )}
+                />
+              ))}
+            </Month>
+          </div>
+        );
+      })}
       <Button onClick={onClickHandler}>Do stuff</Button>
     </>
   );
