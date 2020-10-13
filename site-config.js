@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  siteTitle: 'Андрей Ермаков',
-  siteTitleShort: 'Ermakoy',
-  siteDescription: 'Моя персональная страничка',
-  siteUrl: 'https://ermakoy.dev',
+  siteTitle: 'Хата бар',
+  siteTitleShort: 'ХБ',
+  siteDescription: 'Хата бар от @ermakoy и @mark_smirnov',
+  siteUrl: 'https://hata.bar',
   themeColor: '#000',
   backgroundColor: '#fff',
   pathPrefix: null,

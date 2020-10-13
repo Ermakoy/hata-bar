@@ -9,7 +9,7 @@ import Header from 'components/header';
 import GlobalStyle from 'global.css.js';
 
 import Footer, { Contacts } from 'components/footer';
-import theme from '../../constants/theme';
+import theme from 'constants/theme';
 
 import { Content, Container } from './layout.css';
 

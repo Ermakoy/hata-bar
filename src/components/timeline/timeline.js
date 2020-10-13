@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { getDaysInMonth, format, isSameDay } from "date-fns";
-import firebase from "gatsby-plugin-firebase";
-import { useObjectVal } from "react-firebase-hooks/database";
-import { Button } from "rendition";
-import { ru } from "date-fns/locale";
-import { Week, Month } from "./timeline.css";
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { getDaysInMonth, format, isSameDay } from 'date-fns';
+import firebase from 'gatsby-plugin-firebase';
+import { useObjectVal } from 'react-firebase-hooks/database';
+import { Button, Tooltip, Txt, Box } from 'rendition';
+import { ru } from 'date-fns/locale';
+import { Week, Month } from './timeline.css';
 
 const startYear = 2020;
 
@@ -19,25 +19,25 @@ const Timeline = () => {
       }),
     []
   );
-  const [beerDrinkDays, setBeerDrinkDays] = useState([]);
-  const [data, isLoading] = useObjectVal(
-    firebase.database().ref("beerDrinkDays")
+  const [beerDrinkDays, isLoading] = useObjectVal(
+    firebase.database().ref('beerDrinkDays')
   );
-  console.log({ data, isLoading });
   const database = useMemo(() => firebase && firebase.database(), [firebase]);
-  useEffect(() => {
-    if (database) {
-      data.on("value", ({ val }) => val() && setBeerDrinkDays(val()));
-    }
-  }, [database, data]);
+  const ref = useMemo(() => database && database.ref('beerDrinkDays'), [
+    database,
+  ]);
 
   const onClickHandler = useCallback(() => {
     const now = Date.now();
 
-    if (database && !beerDrinkDays.some(day => isSameDay(day, now))) {
+    if (
+      database &&
+      beerDrinkDays &&
+      !beerDrinkDays?.some(day => isSameDay(day, now))
+    ) {
       beerDrinkDays.length > 0
         ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
-        : database.ref("beerDrinkDays").set([now]);
+        : database.ref('beerDrinkDays').set([now]);
     }
   }, [database, beerDrinkDays]);
 
@@ -45,25 +45,29 @@ const Timeline = () => {
   return (
     <>
       {months.map((month, monthNumber) => {
-        const monthName = format(new Date(startYear, monthNumber), "LLLL", {
-          locale: ru
+        const monthName = format(new Date(startYear, monthNumber), 'LLLL', {
+          locale: ru,
         });
         return (
-          <div key={monthNumber}>
-            <span style={{ width: 70 }}>
+          <Box key={monthNumber}>
+            <Txt italic style={{ width: 70 }}>
               {monthName[0].toUpperCase().concat(monthName.slice(1))}
-            </span>
+            </Txt>
             <Month daysNumber={month.length}>
               {month.map((day, index) => (
                 <Week
-                  passed={beerDrinkDays.some(drinkDay =>
-                    isSameDay(drinkDay, day)
-                  )}
+                  tooltip={format(day, 'd MMMM eeee', {
+                    locale: ru,
+                  })}
+                  passed={
+                    beerDrinkDays &&
+                    beerDrinkDays.some(drinkDay => isSameDay(drinkDay, day))
+                  }
                   key={index}
                 />
               ))}
             </Month>
-          </div>
+          </Box>
         );
       })}
       <Button onClick={onClickHandler}>Do stuff</Button>
