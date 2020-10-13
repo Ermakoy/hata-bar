@@ -1,61 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { isPast, getDaysInMonth, format, isSameDay } from 'date-fns';
-import { Button } from 'rendition';
-import { ru } from 'date-fns/locale';
-import { Week, Month } from './timeline.css';
-import firebase from 'gatsby-plugin-firebase';
-
-import lazyApp from 'firebase/app';
-import lazyDatabase from 'firebase/database';
-
-import { getFirebase } from 'helpers/firebase';
+import React, { useCallback, useEffect, useState, useMemo } from "react";
+import { getDaysInMonth, format, isSameDay } from "date-fns";
+import firebase from "gatsby-plugin-firebase";
+import { useObjectVal } from "react-firebase-hooks/database";
+import { Button } from "rendition";
+import { ru } from "date-fns/locale";
+import { Week, Month } from "./timeline.css";
 
 const startYear = 2020;
 
 const Timeline = () => {
-  const months = Array.from({ length: 12 }).map((el, monthNumber) => {
-    const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
-    return Array.from({ length: daysCount }).map(
-      (day, daysNumber) => new Date(startYear, monthNumber, daysNumber)
-    );
-  });
-  let onClickHandler;
+  const months = useMemo(
+    () =>
+      Array.from({ length: 12 }).map((el, monthNumber) => {
+        const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
+        return Array.from({ length: daysCount }).map(
+          (day, daysNumber) => new Date(startYear, monthNumber, daysNumber)
+        );
+      }),
+    []
+  );
   const [beerDrinkDays, setBeerDrinkDays] = useState([]);
+  const [data, isLoading] = useObjectVal(
+    firebase.database().ref("beerDrinkDays")
+  );
+  console.log({ data, isLoading });
+  const database = useMemo(() => firebase && firebase.database(), [firebase]);
   useEffect(() => {
-    Promise.all([lazyApp, lazyDatabase]).then(([firebase]) => {
-      const database = firebase.database();
-      const info = database.ref('beerDrinkDays');
-      info.on('value', snapshot => {
-        if (snapshot.val()) {
-          setBeerDrinkDays(snapshot.val());
-        }
-      });
-      onClickHandler = () => {
-        const now = Date.now();
-        beerDrinkDays.length > 0
-          ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
-          : database.ref('beerDrinkDays').set([now]);
-      };
-    });
-  }, []);
+    if (database) {
+      data.on("value", ({ val }) => val() && setBeerDrinkDays(val()));
+    }
+  }, [database, data]);
+
+  const onClickHandler = useCallback(() => {
+    const now = Date.now();
+
+    if (database && !beerDrinkDays.some(day => isSameDay(day, now))) {
+      beerDrinkDays.length > 0
+        ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
+        : database.ref("beerDrinkDays").set([now]);
+    }
+  }, [database, beerDrinkDays]);
+
   console.log(beerDrinkDays);
   return (
     <>
       {months.map((month, monthNumber) => {
-        const monthName = format(new Date(startYear, monthNumber), 'LLLL', {
-          locale: ru,
+        const monthName = format(new Date(startYear, monthNumber), "LLLL", {
+          locale: ru
         });
         return (
-          <div>
+          <div key={monthNumber}>
             <span style={{ width: 70 }}>
               {monthName[0].toUpperCase().concat(monthName.slice(1))}
             </span>
             <Month daysNumber={month.length}>
-              {month.map(day => (
+              {month.map((day, index) => (
                 <Week
                   passed={beerDrinkDays.some(drinkDay =>
                     isSameDay(drinkDay, day)
                   )}
+                  key={index}
                 />
               ))}
             </Month>

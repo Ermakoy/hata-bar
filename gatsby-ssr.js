@@ -3,6 +3,10 @@ import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import AppProvider from 'store/provider';
 import wrapPageElementWithTransition from 'helpers/wrapPageElement';
+import 'firebase/database';
+import 'firebase/auth';
+
+// import 'firebase/functions';
 
 export const replaceRenderer = ({ bodyComponent, replaceBodyHTMLString, setHeadComponents }) => {
   // React Context in SSR/build
