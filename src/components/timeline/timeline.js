@@ -1,40 +1,14 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { getDaysInMonth, format, isSameDay } from 'date-fns';
-import firebase from 'gatsby-plugin-firebase';
-import { useObjectVal } from 'react-firebase-hooks/database';
-import { Button, Tooltip, Txt, Box } from 'rendition';
+import React from 'react';
+import { format, isSameDay } from 'date-fns';
+import { Button, Txt, Box, Modal } from 'rendition';
 import { ru } from 'date-fns/locale';
 import { Week, Month } from './timeline.css';
-
-const startYear = 2020;
+import { useDays, startYear } from './useDays';
+import { useBeerDrinkDays } from './useBeerDrinkDays';
 
 const Timeline = () => {
-  const months = useMemo(
-    () =>
-      Array.from({ length: 12 }).map((el, monthNumber) => {
-        const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
-        return Array.from({ length: daysCount }).map(
-          (day, daysNumber) => new Date(startYear, monthNumber, daysNumber)
-        );
-      }),
-    []
-  );
-  const [beerDrinkDays, isLoading] = useObjectVal(
-    firebase.database().ref('beerDrinkDays')
-  );
-  const database = useMemo(() => firebase?.database(), [firebase]);
-  const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
-
-  const onClickHandler = useCallback(() => {
-    const now = Date.now();
-
-    if (database && !beerDrinkDays?.some(day => isSameDay(day, now))) {
-      beerDrinkDays?.length > 0
-        ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
-        : database.ref('beerDrinkDays').set([now]);
-    }
-  }, [database, beerDrinkDays]);
-
+  const months = useDays();
+  const { beerDrinkDays, handleAddToday } = useBeerDrinkDays();
   return (
     <>
       {months.map((month, monthNumber) => {
@@ -43,9 +17,9 @@ const Timeline = () => {
         });
         return (
           <Box key={monthNumber}>
-            <Txt italic style={{ width: 70 }}>
+            <Txt.span italic style={{ width: 70 }}>
               {monthName[0].toUpperCase().concat(monthName.slice(1))}
-            </Txt>
+            </Txt.span>
             <Month daysNumber={month.length}>
               {month.map((day, index) => (
                 <Week
@@ -62,7 +36,7 @@ const Timeline = () => {
           </Box>
         );
       })}
-      <Button onClick={onClickHandler}>Do stuff</Button>
+      <Button onClick={handleAddToday}>Do stuff</Button>
     </>
   );
 };
