@@ -22,26 +22,19 @@ const Timeline = () => {
   const [beerDrinkDays, isLoading] = useObjectVal(
     firebase.database().ref('beerDrinkDays')
   );
-  const database = useMemo(() => firebase && firebase.database(), [firebase]);
-  const ref = useMemo(() => database && database.ref('beerDrinkDays'), [
-    database,
-  ]);
+  const database = useMemo(() => firebase?.database(), [firebase]);
+  const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
 
   const onClickHandler = useCallback(() => {
     const now = Date.now();
 
-    if (
-      database &&
-      beerDrinkDays &&
-      !beerDrinkDays?.some(day => isSameDay(day, now))
-    ) {
-      beerDrinkDays.length > 0
+    if (database && !beerDrinkDays?.some(day => isSameDay(day, now))) {
+      beerDrinkDays?.length > 0
         ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
         : database.ref('beerDrinkDays').set([now]);
     }
   }, [database, beerDrinkDays]);
 
-  console.log(beerDrinkDays);
   return (
     <>
       {months.map((month, monthNumber) => {
@@ -59,10 +52,9 @@ const Timeline = () => {
                   tooltip={format(day, 'd MMMM eeee', {
                     locale: ru,
                   })}
-                  passed={
-                    beerDrinkDays &&
-                    beerDrinkDays.some(drinkDay => isSameDay(drinkDay, day))
-                  }
+                  passed={beerDrinkDays?.some(drinkDay =>
+                    isSameDay(drinkDay, day)
+                  )}
                   key={index}
                 />
               ))}
