@@ -10,15 +10,18 @@ export function useBeerDrinkDays() {
   const database = useMemo(() => firebase?.database(), [firebase]);
   const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
 
-  const handleAddToday = useCallback(() => {
-    const now = Date.now();
+  const handleAddDay = useCallback(
+    day => {
+      const date = Number(day) || Date.now();
 
-    if (database && !beerDrinkDays?.some(day => isSameDay(day, now))) {
-      beerDrinkDays?.length > 0
-        ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, now] })
-        : database.ref('beerDrinkDays').set([now]);
-    }
-  }, [database, beerDrinkDays]);
+      if (database && !beerDrinkDays?.some(day => isSameDay(day, date))) {
+        beerDrinkDays?.length > 0
+          ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, date] })
+          : database.ref('beerDrinkDays').set([date]);
+      }
+    },
+    [database, beerDrinkDays]
+  );
 
-  return { beerDrinkDays, isLoading, database, ref, handleAddToday };
+  return { beerDrinkDays, isLoading, database, ref, handleAddDay };
 }
