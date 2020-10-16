@@ -50,6 +50,7 @@ export default createGlobalStyle`
     -webkit-font-feature-settings: "pnum";
     font-feature-settings: "pnum";
     font-variant-numeric: proportional-nums;
+    user-select: none;
   }
 
   ol, ul {

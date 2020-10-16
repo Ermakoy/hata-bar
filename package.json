@@ -35,6 +35,7 @@
     "react-firebase-hooks": "^2.2.0",
     "react-helmet": "^5.2.0",
     "react-pose": "^4.0.5",
+    "react-use": "^15.3.4",
     "react-yandex-maps": "^4.2.0",
     "rendition": "^11.35.2",
     "styled-components": "^4.1.3",
