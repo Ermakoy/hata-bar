@@ -30,10 +30,9 @@ const Timeline = () => {
   const { beerDrinkDays, handleAddDay } = useBeerDrinkDays();
   const [modalState, setModalState] = useState({ show: false });
   const handleDayLogTap = useCallback(
-    day => console.log(day) || setModalState({ show: true, day }),
+    day => setModalState({ show: true, day }),
     []
   );
-
   return (
     <>
       {months.map((month, monthNumber) => {

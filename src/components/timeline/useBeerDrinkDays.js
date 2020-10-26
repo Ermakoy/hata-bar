@@ -4,20 +4,30 @@ import { useObjectVal } from 'react-firebase-hooks/database';
 import { isSameDay } from 'date-fns';
 
 export function useBeerDrinkDays() {
-  const [beerDrinkDays, isLoading] = useObjectVal(
+  const [beerDrinkDaysRaw, isLoading] = useObjectVal(
     firebase.database().ref('beerDrinkDays')
   );
+  const beerDrinkDays = useMemo(() => beerDrinkDaysRaw?.filter(Boolean), [
+    beerDrinkDaysRaw,
+  ]);
   const database = useMemo(() => firebase?.database(), [firebase]);
   const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
 
   const handleAddDay = useCallback(
-    day => {
-      const date = Number(day) || Date.now();
-
-      if (database && !beerDrinkDays?.some(day => isSameDay(day, date))) {
+    ({ day = Date.now(), name }) => {
+      const instance = {
+        date: Number(day),
+        name: [].concat(name),
+      };
+      if (
+        database &&
+        !beerDrinkDays?.some(day => isSameDay(day, instance.date))
+      ) {
         beerDrinkDays?.length > 0
-          ? database.ref().update({ beerDrinkDays: [...beerDrinkDays, date] })
-          : database.ref('beerDrinkDays').set([date]);
+          ? database
+              .ref()
+              .update({ beerDrinkDays: beerDrinkDays.concat(instance) })
+          : database.ref('beerDrinkDays').set([instance]);
       }
     },
     [database, beerDrinkDays]
