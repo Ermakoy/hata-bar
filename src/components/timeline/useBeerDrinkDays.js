@@ -32,7 +32,7 @@ export function useBeerDrinkDays() {
         date: Number(date),
         name: [].concat(name).map(el => el.toLowerCase()),
       };
-
+      console.log();
       const dayIndex = beerDrinkDaysRaw.findIndex(({ date }) =>
         isSameDay(date, instance.date)
       );

@@ -6,7 +6,7 @@ import { Box, Modal, Input } from 'rendition';
 const [markKey, ermakoyKey] = [
   process.env.GATSBY_MARK_KEY,
   process.env.GATSBY_ERMAKOY_KEY,
-];
+].map(el => el.toLowerCase());
 
 export function InputModal({ setModalState, handleAddDay, modalState }) {
   const [inputVal, setInputVal] = useState('');
@@ -23,6 +23,7 @@ export function InputModal({ setModalState, handleAddDay, modalState }) {
       done={x => {
         const names = inputVal
           .split(' ')
+          .map(el => el.toLowerCase())
           .filter(el => [markKey, ermakoyKey].includes(el))
           .map(key => ({ [markKey]: 'Mark', [ermakoyKey]: 'Ermakoy' }[key]));
         if (names.length) {

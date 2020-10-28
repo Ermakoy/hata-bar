@@ -14,12 +14,15 @@ function Day({ marked, day, handleDayLogTap, names }) {
   const handleLong = useLongPress(() => handleDayLogTap(day), {
     isPreventDefault: false,
   });
+  let tooltipContent = format(day, 'd MMMM eeee', {
+    locale: ru,
+  });
+  if (names?.length) {
+    const prefix = names?.length > 1 ? 'Пили' : 'Пил';
+    tooltipContent = tooltipContent.concat('\n').concat();
+  }
   return (
-    <Tooltip
-      content={format(day, 'd MMMM eeee', {
-        locale: ru,
-      })}
-    >
+    <Tooltip content={tooltipContent}>
       <Week {...handleLong} passed={!!names}>
         {names?.map(name => (
           <PersonDrink name={name} />
