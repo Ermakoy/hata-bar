@@ -23,7 +23,7 @@ export function InputModal({ setModalState, handleAddDay, modalState }) {
       done={x => {
         const names = inputVal
           .split(' ')
-          .filter(Array.prototype.includes.bind([markKey, ermakoyKey]))
+          .filter(el => [markKey, ermakoyKey].includes(el))
           .map(key => ({ [markKey]: 'Mark', [ermakoyKey]: 'Ermakoy' }[key]));
         if (names.length) {
           handleAddDay({ date: modalState.day, name: names });

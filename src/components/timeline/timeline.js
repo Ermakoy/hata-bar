@@ -8,8 +8,9 @@ import { useDays, START_YEAR } from './useDays';
 import { useBeerDrinkDays } from './useBeerDrinkDays';
 import { InputModal } from './InputModal';
 import { Tooltip } from './Tooltip';
+import { PersonDrink } from './PersonDrink';
 
-function Day({ marked, day, handleDayLogTap }) {
+function Day({ marked, day, handleDayLogTap, names }) {
   const handleLong = useLongPress(() => handleDayLogTap(day), {
     isPreventDefault: false,
   });
@@ -19,7 +20,11 @@ function Day({ marked, day, handleDayLogTap }) {
         locale: ru,
       })}
     >
-      <Week {...handleLong} passed={marked} />
+      <Week {...handleLong} passed={!!names}>
+        {names?.map(name => (
+          <PersonDrink name={name} />
+        ))}
+      </Week>
     </Tooltip>
   );
 }
@@ -44,17 +49,19 @@ const Timeline = () => {
               {monthName[0].toUpperCase().concat(monthName.slice(1))}
             </Txt.span>
             <Month daysNumber={month.length}>
-              {month.map((day, index) => (
-                <Day
-                  day={day}
-                  key={index}
-                  dayNumber={index}
-                  handleDayLogTap={handleDayLogTap}
-                  marked={beerDrinkDays?.some(({ date: drinkDay }) =>
-                    isSameDay(drinkDay, day)
-                  )}
-                />
-              ))}
+              {month.map((day, index) => {
+                const matchDay = beerDrinkDays?.find(({ date: drinkDay }) =>
+                  isSameDay(drinkDay, day)
+                );
+                return (
+                  <Day
+                    day={day}
+                    key={index}
+                    handleDayLogTap={handleDayLogTap}
+                    names={matchDay?.name}
+                  />
+                );
+              })}
             </Month>
           </Box>
         );

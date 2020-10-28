@@ -60,64 +60,32 @@ export const TimelineContainer = styled.div`
 `;
 
 export const Week = styled(Box)`
-         position: relative;
-         display: inline-block;
-         width: 20px;
-         height: 20px;
-         padding-right: 5px;
-         &::before {
-           content: '';
-           display: block;
-           width: 100%;
-           padding-bottom: 100%;
-           background: ${p =>
-             p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
-         }
-
-         ${p =>
-           p.passed
-             ? css`
-                 &:hover {
-                   &::before {
-                     animation: ${rainbow} 2s linear infinite;
-                   }
-                 }
-               `
-             : ''}
-
-         &::after {
-           position: absolute;
-           left: calc(100% + 4px);
-           top: 50%;
-           -webkit-transform: translateY(-50%);
-           transform: translateY(-50%);
-           font-size: 12px;
-           line-height: 1;
-         }
-
-         &:nth-child(52)::after {
-           content: 'Год';
-         }
-
-         &:nth-child(52n) {
-           counter-increment: year;
-         }
-
-         @media (max-width: 479px) {
-           &:nth-child(520n)::after {
-             content: counter(year);
-           }
-         }
-
-         @media (min-width: 480px) and (max-width: 767px) {
-           &:nth-child(260n)::after {
-             content: counter(year);
-           }
-         }
-
-         @media (min-width: 768px) {
-           &:nth-child(208n)::after {
-             content: counter(year);
-           }
-         }
-       `;
+  position: relative;
+  display: ${p => (p.passed ? 'inline-flex' : 'inline-block')};
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  ${p =>
+    !p.passed
+      ? css`
+          &::before {
+            content: '';
+            display: block;
+            width: 100%;
+            padding-bottom: 100%;
+            background: ${p =>
+              p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
+          }
+        `
+      : ''}
+  ${p =>
+    p.passed
+      ? css`
+          &:hover {
+            &::before {
+              animation: ${rainbow} 2s linear infinite;
+            }
+          }
+        `
+      : ''}
+`;
