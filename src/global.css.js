@@ -39,6 +39,8 @@ export default createGlobalStyle`
     min-height: 100vh;
     /* font-size: 1.6rem; */
     height: auto;
+    padding-top: calc(1rem + 1vh);
+    padding-bottom: calc(1rem + 1vh);
     padding-left: calc(1rem + 1vw);
     padding-right: calc(1rem + 1vw);
     color: #000;

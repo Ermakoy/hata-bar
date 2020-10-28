@@ -4,24 +4,23 @@ import { Button, Txt, Box, Modal, Input } from 'rendition';
 import { ru } from 'date-fns/locale';
 import { useLongPress } from 'react-use';
 import { Week, Month } from './timeline.css';
-import { useDays, startYear } from './useDays';
+import { useDays, START_YEAR } from './useDays';
 import { useBeerDrinkDays } from './useBeerDrinkDays';
 import { InputModal } from './InputModal';
+import { Tooltip } from './Tooltip';
 
 function Day({ marked, day, handleDayLogTap }) {
-  const handleLong = useLongPress(() => handleDayLogTap(day));
-
+  const handleLong = useLongPress(() => handleDayLogTap(day), {
+    isPreventDefault: false,
+  });
   return (
-    <Week
-      {...handleLong}
-      tooltip={{
-        trigger: 'click',
-        text: format(day, 'd MMMM eeee', {
-          locale: ru,
-        }),
-      }}
-      passed={marked}
-    />
+    <Tooltip
+      content={format(day, 'd MMMM eeee', {
+        locale: ru,
+      })}
+    >
+      <Week {...handleLong} passed={marked} />
+    </Tooltip>
   );
 }
 
@@ -36,7 +35,7 @@ const Timeline = () => {
   return (
     <>
       {months.map((month, monthNumber) => {
-        const monthName = format(new Date(startYear, monthNumber), 'LLLL', {
+        const monthName = format(new Date(START_YEAR, monthNumber), 'LLLL', {
           locale: ru,
         });
         return (
@@ -49,8 +48,9 @@ const Timeline = () => {
                 <Day
                   day={day}
                   key={index}
+                  dayNumber={index}
                   handleDayLogTap={handleDayLogTap}
-                  marked={beerDrinkDays?.some(drinkDay =>
+                  marked={beerDrinkDays?.some(({ date: drinkDay }) =>
                     isSameDay(drinkDay, day)
                   )}
                 />

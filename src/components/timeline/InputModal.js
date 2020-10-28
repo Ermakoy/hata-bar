@@ -21,8 +21,12 @@ export function InputModal({ setModalState, handleAddDay, modalState }) {
         setModalState({ show: false });
       }}
       done={x => {
-        if ([markKey, ermakoyKey].includes(inputVal.toLowerCase())) {
-          handleAddDay(modalState.day);
+        const names = inputVal
+          .split(' ')
+          .filter(Array.prototype.includes.bind([markKey, ermakoyKey]))
+          .map(key => ({ [markKey]: 'Mark', [ermakoyKey]: 'Ermakoy' }[key]));
+        if (names.length) {
+          handleAddDay({ date: modalState.day, name: names });
         }
         setModalState({ show: false });
       }}

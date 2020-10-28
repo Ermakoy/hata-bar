@@ -1,20 +1,24 @@
 import { useMemo } from 'react';
-import { isSameDay } from 'date-fns';
+import { getMonth, eachDayOfInterval, getYear } from 'date-fns';
 import { getDaysInMonth } from 'date-fns';
 
-export const startYear = 2020;
+export const START_YEAR = 2020;
+
+const getFullMonths = (monthCount, startYear = START_YEAR) =>
+  Array.from({ length: monthCount }).map((el, monthNumber) => {
+    const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
+    return Array.from({ length: daysCount }).map(
+      (day, daysNumber) => new Date(startYear, monthNumber, daysNumber + 1)
+    );
+  });
 
 export const useDays = () =>
   useMemo(() => {
-    const month = Array.from({ length: 12 }).map((el, monthNumber) => {
-      const daysCount = getDaysInMonth(new Date(startYear, monthNumber));
-      return Array.from({ length: daysCount }).map(
-        (day, daysNumber) => new Date(startYear, monthNumber, daysNumber + 1)
-      );
-    });
     const today = new Date();
-    let currentDay = new Date(startYear, 0, 1);
-    let currentMonth = 0;
-    let daysInMonth = getDaysInMonth(currentDay);
-    while (!isSameDay(currentDay, today)) {}
+    return getFullMonths(getMonth(today)).concat([
+      eachDayOfInterval({
+        start: new Date(getYear(today), getMonth(today), 1),
+        end: today,
+      }),
+    ]);
   }, []);

@@ -1,18 +1,30 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import firebase from 'gatsby-plugin-firebase';
 import { useObjectVal } from 'react-firebase-hooks/database';
 import { isSameDay } from 'date-fns';
 
 export function useBeerDrinkDays() {
   const [beerDrinkDaysRaw, isLoading] = useObjectVal(
-    firebase.database().ref('beerDrinkDays')
+    firebase?.database().ref('beerDrinkDays')
   );
   const beerDrinkDays = useMemo(() => beerDrinkDaysRaw?.filter(Boolean), [
     beerDrinkDaysRaw,
   ]);
   const database = useMemo(() => firebase?.database(), [firebase]);
   const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
-
+  // UPD SCRIPT
+  // useEffect(() => {
+  //   if (beerDrinkDays?.length)
+  //     database
+  //       .ref('beerDrinkDays')
+  //       .set(
+  //         beerDrinkDays.map(el =>
+  //           typeof el === 'number'
+  //             ? { date: Number(el), name: ['Mark', 'Ermakoy'] }
+  //             : el
+  //         )
+  //       );
+  // }, [beerDrinkDays?.length]);
   const handleAddDay = useCallback(
     ({ day = Date.now(), name }) => {
       const instance = {
