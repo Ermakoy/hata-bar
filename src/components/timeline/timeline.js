@@ -10,7 +10,7 @@ import { InputModal } from './InputModal';
 import { Tooltip } from './Tooltip';
 import { PersonDrink } from './PersonDrink';
 
-function Day({ marked, day, handleDayLogTap, names }) {
+function Day({ marked, day, handleDayLogTap, names, isLoading }) {
   const handleLong = useLongPress(() => handleDayLogTap(day), {
     isPreventDefault: false,
   });
@@ -23,7 +23,7 @@ function Day({ marked, day, handleDayLogTap, names }) {
   }
   return (
     <Tooltip content={tooltipContent}>
-      <Week {...handleLong} passed={!!names}>
+      <Week {...handleLong} isLoading={isLoading} passed={!!names}>
         {names?.map(name => (
           <PersonDrink name={name} />
         ))}
@@ -34,7 +34,7 @@ function Day({ marked, day, handleDayLogTap, names }) {
 
 const Timeline = () => {
   const months = useDays();
-  const { beerDrinkDays, handleAddDay } = useBeerDrinkDays();
+  const { beerDrinkDays, handleAddDay, isLoading } = useBeerDrinkDays();
   const [modalState, setModalState] = useState({ show: false });
   const handleDayLogTap = useCallback(
     day => setModalState({ show: true, day }),
@@ -60,6 +60,7 @@ const Timeline = () => {
                   <Day
                     day={day}
                     key={index}
+                    isLoading={isLoading}
                     handleDayLogTap={handleDayLogTap}
                     names={matchDay?.name}
                   />

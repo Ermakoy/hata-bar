@@ -40,6 +40,15 @@ const rainbow = keyframes`
   }
 `;
 
+const grayscale = keyframes`
+  100%,0%{
+			opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+`;
+
 export const Month = styled.div`
   @media (min-width: 480px) {
     grid-gap: 2px;
@@ -68,24 +77,14 @@ export const Week = styled(Box)`
   ${p =>
     !p.passed
       ? css`
-          &::before {
-            content: '';
-            display: block;
-            width: 100%;
-            padding-bottom: 100%;
-            background: ${p =>
-              p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
-          }
+          background-color: ${p =>
+            p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
         `
       : ''}
   ${p =>
-    p.passed
+    p.isLoading
       ? css`
-          &:hover {
-            &::before {
-              animation: ${rainbow} 2s linear infinite;
-            }
-          }
+          animation: ${grayscale} 2s linear infinite;
         `
       : ''}
 `;

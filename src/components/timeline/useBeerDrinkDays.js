@@ -13,26 +13,12 @@ export function useBeerDrinkDays() {
   ]);
   const database = useMemo(() => firebase?.database(), [firebase]);
   const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
-  // UPD SCRIPT
-  // useEffect(() => {
-  //   if (beerDrinkDays?.length)
-  //     database
-  //       .ref('beerDrinkDays')
-  //       .set(
-  //         beerDrinkDays.map(el =>
-  //           typeof el === 'number'
-  //             ? { date: Number(el), name: ['Mark', 'Ermakoy'] }
-  //             : el
-  //         )
-  //       );
-  // }, [beerDrinkDays?.length]);
   const handleAddDay = useCallback(
     ({ date = Date.now(), name }) => {
       const instance = {
         date: Number(date),
         name: [].concat(name).map(el => el.toLowerCase()),
       };
-      console.log();
       const dayIndex = beerDrinkDaysRaw.findIndex(({ date }) =>
         isSameDay(date, instance.date)
       );
@@ -43,7 +29,6 @@ export function useBeerDrinkDays() {
           .ref(`beerDrinkDays/${dayIndex}/name`)
           .set(uniq(name.map(toLower).concat(instance.name)));
       } else {
-        console.log({ instance });
         database.ref('beerDrinkDays').set(beerDrinkDays.concat(instance));
       }
     },
@@ -52,3 +37,17 @@ export function useBeerDrinkDays() {
 
   return { beerDrinkDays, isLoading, database, ref, handleAddDay };
 }
+
+// UPD SCRIPT
+// useEffect(() => {
+//   if (beerDrinkDays?.length)
+//     database
+//       .ref('beerDrinkDays')
+//       .set(
+//         beerDrinkDays.map(el =>
+//           typeof el === 'number'
+//             ? { date: Number(el), name: ['Mark', 'Ermakoy'] }
+//             : el
+//         )
+//       );
+// }, [beerDrinkDays?.length]);
