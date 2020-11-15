@@ -34,30 +34,27 @@ const tweetData = {
 export const Quotes = ({ data }) => {
   return (
     <Flex alignItems='center' flexDirection='column'>
-      {Array(3)
-        .fill({ type: 'text', data: tweetData })
-        .concat(data)
-        .map(({ type, url, data }) => (
-          <Box mt={3} mb={3}>
+      {data.map(({ type, url, data }) => (
+        <Box mt={3} mb={3}>
+          {
             {
-              {
-                video: (
-                  <Box width={['100%', '75vw', 588]}>
-                    <ReactPlayer height='100%' width='100%' url={url} />
-                  </Box>
-                ),
-                text: <Tweet data={data} />,
-                image: (
-                  <Box
-                    maxWidth={['100%', '75vw', 588]}
-                    style={{ backgroundImage: data }}
-                    src={data}
-                  />
-                ),
-              }[type]
-            }
-          </Box>
-        ))}
+              video: (
+                <Box width={['100%', '75vw', 588]}>
+                  <ReactPlayer height='100%' width='100%' url={url} />
+                </Box>
+              ),
+              text: <Tweet data={data} />,
+              image: (
+                <Box
+                  maxWidth={['100%', '75vw', 588]}
+                  style={{ backgroundImage: data }}
+                  src={data}
+                />
+              ),
+            }[type]
+          }
+        </Box>
+      ))}
     </Flex>
   );
 };
