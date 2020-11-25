@@ -24,9 +24,7 @@ const Header = ({ title, avatar }) => (
   <AnimatedContainer>
     <Container>
       <HeaderContent>
-        <StyledAvatar fixed={avatar} />
         <div>
-          <Title>{title}</Title>
           <Navigation />
         </div>
       </HeaderContent>

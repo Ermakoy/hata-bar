@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Input, Txt, Tabs, Tab, Button } from 'rendition';
 import { useForm } from 'react-hook-form';
 import { useObjectVal } from 'react-firebase-hooks/database';
@@ -18,8 +18,8 @@ const LabledInput = ({ title, refProp, ...rest }) => (
   </label>
 );
 
-const TxtQuoteForm = props => {
-  const { register, handleSubmit, watch, errors } = useForm();
+function TxtQuoteForm(props) {
+  const { register, handleSubmit } = useForm();
   const onSubmit = data => {
     const aaa = {
       type: 'text',
@@ -37,7 +37,7 @@ const TxtQuoteForm = props => {
         },
       },
     };
-    props.databaseRef.set(props.quotes.concat(aaa));
+    props.addQuote(aaa);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -52,21 +52,62 @@ const TxtQuoteForm = props => {
       <Button type='submit'>Submit</Button>
     </form>
   );
-};
+}
+
+function VideoQuoteForm(props) {
+  const { register, handleSubmit } = useForm();
+  function onSubmit({ url }) {
+    const wrappedData = {
+      type: 'video',
+      url,
+    };
+    props.addQuote(wrappedData);
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <LabledInput title='Img url' name='url' refProp={register} />
+      <Button type='submit'>Submit</Button>
+    </form>
+  );
+}
+
+function ImageQuoteForm(props) {
+  const { register, handleSubmit } = useForm();
+  function onSubmit({ url }) {
+    const wrappedData = {
+      type: 'image',
+      url,
+    };
+    props.addQuote(wrappedData);
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <LabledInput title='Img url' name='url' refProp={register} />
+      <Button type='submit'>Submit</Button>
+    </form>
+  );
+}
 
 const Page = ({ data }) => {
   const database = useMemo(() => firebase?.database(), [firebase]);
-  const [quotes, isLoading] = useObjectVal(database?.ref('quotes'));
+  const [quotes] = useObjectVal(database?.ref('quotes'));
   const ref = useMemo(() => database?.ref('quotes'), [database]);
-  console.log({ quotes });
+  const addQuote = useCallback(quote => ref.set(quotes.concat(quote)), [
+    ref,
+    quotes,
+  ]);
   return (
     <Layout>
       <Tabs>
         <Tab title='Txt'>
-          <TxtQuoteForm quotes={quotes} databaseRef={ref} />
+          <TxtQuoteForm addQuote={addQuote} />
         </Tab>
-        <Tab title='Video'></Tab>
-        <Tab title='Image'></Tab>
+        <Tab title='Video'>
+          <VideoQuoteForm addQuote={addQuote} />
+        </Tab>
+        <Tab title='Image'>
+          <ImageQuoteForm addQuote={addQuote} />
+        </Tab>
       </Tabs>
     </Layout>
   );

@@ -20,6 +20,7 @@ const Layout = ({ children }) => (
     <ThemeProvider theme={theme}>
       <Provider>
         <Container>
+          <Header />
           <Content>{children}</Content>
         </Container>
       </Provider>

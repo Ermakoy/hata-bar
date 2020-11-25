@@ -47,8 +47,7 @@ export const Quotes = ({ data }) => {
               image: (
                 <Box
                   maxWidth={['100%', '75vw', 588]}
-                  style={{ backgroundImage: data }}
-                  src={data}
+                  style={{ backgroundImage: url }}
                 />
               ),
             }[type]

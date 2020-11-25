@@ -4,15 +4,11 @@ import { NavLink, NavContainer, NavItem, NavList } from './navigation.css';
 const ROUTES = [
   {
     to: '/',
-    text: 'Обо мне',
+    text: 'Главная',
   },
   {
-    to: '/timeline',
-    text: 'Таймлайн',
-  },
-  {
-    to: '/pokushat',
-    text: 'Покушать',
+    to: '/quotes',
+    text: 'Цитаты',
   },
 ];
 
