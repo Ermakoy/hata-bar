@@ -48,7 +48,7 @@ const Timeline = () => {
         });
         return (
           <Box key={monthNumber}>
-            <Txt.span italic style={{ width: 70 }}>
+            <Txt.span italic fontSize={3} style={{ width: 70 }}>
               {monthName[0].toUpperCase().concat(monthName.slice(1))}
             </Txt.span>
             <Month daysNumber={month.length}>

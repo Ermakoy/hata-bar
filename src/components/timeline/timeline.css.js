@@ -70,10 +70,12 @@ export const TimelineContainer = styled.div`
 
 export const Week = styled(Box)`
   position: relative;
+  border-radius: 10px;
+  overflow: hidden;
   display: ${p => (p.passed ? 'inline-flex' : 'inline-block')};
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
   ${p =>
     !p.passed
       ? css`
