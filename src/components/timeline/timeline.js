@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { keyBy, head } from 'lodash';
+import { head } from 'lodash';
 import { format, isSameDay, getYear } from 'date-fns';
 import { Button, Txt, Box, Modal, Input, Tabs, Tab } from 'rendition';
 import { ru } from 'date-fns/locale';
@@ -35,8 +35,12 @@ function Day({ marked, day, handleDayLogTap, names, isLoading }) {
 
 const Timeline = () => {
   const { beerDrinkDays, handleAddDay, isLoading } = useBeerDrinkDays();
-  const earliestDrinkDayYear = getYear(
-    head(beerDrinkDays.map(({ date }) => date).sort((a, b) => a - b))
+  const earliestDrinkDayYear = useMemo(
+    () =>
+      getYear(
+        head(beerDrinkDays.map(({ date }) => date).sort((a, b) => a - b))
+      ),
+    [isLoading]
   );
   const monthsByYear = useDays(earliestDrinkDayYear);
   const renderMonth = useCallback(

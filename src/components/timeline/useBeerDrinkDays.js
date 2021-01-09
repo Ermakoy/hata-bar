@@ -1,5 +1,5 @@
-import { useMemo, useCallback, useEffect } from 'react';
-import { intersection, uniq, toLower } from 'lodash';
+import { useMemo, useCallback } from 'react';
+import { uniq, toLower } from 'lodash';
 import firebase from 'gatsby-plugin-firebase';
 import { useObjectVal } from 'react-firebase-hooks/database';
 import { isSameDay } from 'date-fns';
@@ -32,7 +32,7 @@ export function useBeerDrinkDays() {
         database.ref('beerDrinkDays').set(beerDrinkDays.concat(instance));
       }
     },
-    [database, beerDrinkDays]
+    [database, beerDrinkDays, beerDrinkDaysRaw?.length]
   );
 
   return { beerDrinkDays, isLoading, database, ref, handleAddDay };
