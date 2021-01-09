@@ -5,7 +5,6 @@ import Layout from 'components/layout';
 import Timeline from 'components/timeline';
 
 const Page = ({ data }) => {
-  console.log('got here');
   return (
     <Layout>
       <div
