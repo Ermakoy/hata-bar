@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "canonical",
+    "canonical/lodash",
+    "canonical/node",
+    "canonical/react"
+  ],
+  "rules": {
+    "react/prop-types": 0,
+    "arrow-body-style": ["error", "as-needed"],
+    "filenames/match-exported": 0,
+    "func-style": 0,
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }]
+  }
+}

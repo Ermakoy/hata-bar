@@ -1,7 +1,9 @@
-import { createGlobalStyle } from 'styled-components';
 import theme from 'constants/theme';
+import {
+  createGlobalStyle,
+} from 'styled-components';
 
-const { accent } = theme;
+const {accent} = theme;
 
 export default createGlobalStyle`
   html, body, div, span, applet, object, iframe,
