@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import MEDIA from 'helpers/mediaTemplates';
+import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;

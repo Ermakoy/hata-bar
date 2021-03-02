@@ -1,7 +1,7 @@
-import styled from 'styled-components';
 import theme from 'constants/theme';
+import styled from 'styled-components';
 
-const { accent } = theme;
+const {accent} = theme;
 
 export const Container = styled.div`
   padding: 4rem;
@@ -12,5 +12,5 @@ export const Container = styled.div`
   color: #fff;
   transition: background-color 0.3s ease;
 
-  background-color: ${({ isVisible }) => (isVisible ? accent : ' #333')};
+  background-color: ${({isVisible}) => (isVisible ? accent : ' #333')};
 `;

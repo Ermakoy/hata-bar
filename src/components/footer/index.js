@@ -8,26 +8,23 @@ const ContactsItem = styled.li`
   padding-top: 0.5em;
 `;
 
-export const Contacts = () => (
-  <ul className='contacts'>
-    <ContactsItem>
-      <a href='mailto:andrey@ermakoy.dev'>andrey@ermakoy.dev</a>
-    </ContactsItem>
-    <ContactsItem>
-      <a href='https://t.me/ermakoy'>Телеграм</a>
-    </ContactsItem>
-    <ContactsItem>
-      <a href='https://vk.com/ermakoy'>ВК</a>
-    </ContactsItem>
-    <ContactsItem>
-      <a href='https://github.com/ermakoy'>Гитхаб</a>
-    </ContactsItem>
-    <ContactsItem>
-      <a href='https://vk.cc/asLeHO'>Резюме</a>
-    </ContactsItem>
-  </ul>
-);
-
+export const Contacts = () => <ul className='contacts'>
+  <ContactsItem>
+    <a href='mailto:andrey@ermakoy.dev'>andrey@ermakoy.dev</a>
+  </ContactsItem>
+  <ContactsItem>
+    <a href='https://t.me/ermakoy'>Телеграм</a>
+  </ContactsItem>
+  <ContactsItem>
+    <a href='https://vk.com/ermakoy'>ВК</a>
+  </ContactsItem>
+  <ContactsItem>
+    <a href='https://github.com/ermakoy'>Гитхаб</a>
+  </ContactsItem>
+  <ContactsItem>
+    <a href='https://vk.cc/asLeHO'>Резюме</a>
+  </ContactsItem>
+</ul>;
 export default styled.footer`
   font-size: 0.85rem;
   margin-top: auto;

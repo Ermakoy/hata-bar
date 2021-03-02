@@ -1,29 +1,35 @@
-import { useMemo, useCallback } from 'react';
-import { uniq, toLower } from 'lodash';
+import {
+  isSameDay,
+} from 'date-fns';
 import firebase from 'gatsby-plugin-firebase';
-import { useObjectVal } from 'react-firebase-hooks/database';
-import { isSameDay } from 'date-fns';
+import {
+  uniq, toLower,
+} from 'lodash';
+import {
+  useMemo, useCallback,
+} from 'react';
+import {
+  useObjectVal,
+} from 'react-firebase-hooks/database';
 
-export function useBeerDrinkDays() {
+export function useBeerDrinkDays () {
   const [beerDrinkDaysRaw, isLoading] = useObjectVal(
-    firebase?.database().ref('beerDrinkDays')
+    firebase?.database().ref('beerDrinkDays'),
   );
   const beerDrinkDays = useMemo(() => beerDrinkDaysRaw?.filter(Boolean) || [], [
     beerDrinkDaysRaw,
   ]);
-  const database = useMemo(() => firebase?.database(), [firebase]);
+  const database = firebase?.database();
   const ref = useMemo(() => database?.ref('beerDrinkDays'), [database]);
   const handleAddDay = useCallback(
-    ({ date = Date.now(), name }) => {
+    ({date = Date.now(), name}) => {
       const instance = {
         date: Number(date),
-        name: [].concat(name).map(el => el.toLowerCase()),
+        name: [].concat(name).map((element) => element.toLowerCase()),
       };
-      const dayIndex = beerDrinkDaysRaw.findIndex(({ date }) =>
-        isSameDay(date, instance.date)
-      );
+      const dayIndex = beerDrinkDaysRaw.findIndex(({date}) => isSameDay(date, instance.date));
       if (dayIndex !== -1) {
-        const { name } = beerDrinkDaysRaw[dayIndex];
+        const {name} = beerDrinkDaysRaw[dayIndex];
 
         database
           .ref(`beerDrinkDays/${dayIndex}/name`)
@@ -32,10 +38,14 @@ export function useBeerDrinkDays() {
         database.ref('beerDrinkDays').set(beerDrinkDays.concat(instance));
       }
     },
-    [database, beerDrinkDays, beerDrinkDaysRaw?.length]
+    [database, beerDrinkDays, beerDrinkDaysRaw],
   );
 
-  return { beerDrinkDays, isLoading, database, ref, handleAddDay };
+  return {beerDrinkDays,
+    database,
+    handleAddDay,
+    isLoading,
+    ref};
 }
 
 // UPD SCRIPT

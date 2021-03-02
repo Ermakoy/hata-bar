@@ -1,8 +1,14 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { Button, Close } from './modal.css';
-import { Dialog } from '@reach/dialog';
+import {
+  Dialog,
+} from '@reach/dialog';
 import VisuallyHidden from '@reach/visually-hidden';
+import PropTypes from 'prop-types';
+import React, {
+  PureComponent,
+} from 'react';
+import {
+  Button, Close,
+} from './modal.css';
 
 import '@reach/dialog/styles.css';
 
@@ -10,21 +16,21 @@ import '@reach/dialog/styles.css';
 // React Context integration. No need to keep this if
 // you don't require a Modal in your project.
 export default class Modal extends PureComponent {
-  componentDidMount() {
+  componentDidMount () {
     document.addEventListener('keydown', this.onKeyDown);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     document.removeEventListener('keydown', this.onKeyDown);
   }
 
-  onKeyDown = ({ key }) => {
+  onKeyDown = ({key}) => {
     if (key === 'Escape') {
       this.props.open && this.props.hideModal();
     }
   };
 
-  disableScrolling(open) {
+  disableScrolling (open) {
     // Disables scrolling when the modal is open, as suggested by
     // https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/dialog-modal/dialog.html
     if (open) {
@@ -36,8 +42,8 @@ export default class Modal extends PureComponent {
     }
   }
 
-  render() {
-    const { children, open, showModal, hideModal } = this.props;
+  render () {
+    const {children, open, showModal, hideModal} = this.props;
 
     if (typeof document !== 'undefined') {
       this.disableScrolling(open);
@@ -61,7 +67,7 @@ export default class Modal extends PureComponent {
 
 Modal.propTypes = {
   children: PropTypes.node,
+  hideModal: PropTypes.func,
   open: PropTypes.bool.isRequired,
   showModal: PropTypes.func,
-  hideModal: PropTypes.func,
 };

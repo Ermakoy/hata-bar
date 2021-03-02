@@ -1,7 +1,9 @@
-import React from 'react';
 import Tippy from '@tippyjs/react/headless';
+import {
+  useSpring, motion,
+} from 'framer-motion';
+import React from 'react';
 import styled from 'styled-components';
-import { useSpring, motion } from 'framer-motion';
 
 const Box = styled(motion.div)`
   background: #333;
@@ -10,19 +12,20 @@ const Box = styled(motion.div)`
   border-radius: 4px;
 `;
 
-export function Tooltip({ children, render, content, ...other }) {
-  const springConfig = { damping: 15, stiffness: 300 };
+export function Tooltip ({children, render, content, ...other}) {
+  const springConfig = {damping: 15,
+    stiffness: 300};
   const initialScale = 0.5;
   const opacity = useSpring(0, springConfig);
   const scale = useSpring(initialScale, springConfig);
 
-  function onMount() {
+  function onMount () {
     scale.set(1);
     opacity.set(1);
   }
 
-  function onHide({ unmount }) {
-    const cleanup = scale.onChange(value => {
+  function onHide ({unmount}) {
+    const cleanup = scale.onChange((value) => {
       if (value <= initialScale) {
         cleanup();
         unmount();
@@ -32,16 +35,17 @@ export function Tooltip({ children, render, content, ...other }) {
     scale.set(initialScale);
     opacity.set(0);
   }
+
   return (
     <Tippy
-      render={attrs => (
-        <Box style={{ scale, opacity }} {...attrs}>
-          {content}
-        </Box>
-      )}
-      animation={true}
-      onMount={onMount}
+      animation
       onHide={onHide}
+      onMount={onMount}
+      render={(attributes) => <Box
+        style={{opacity,
+          scale}} {...attributes}>
+        {content}
+      </Box>}
       {...other}
     >
       {children}

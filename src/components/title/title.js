@@ -1,18 +1,15 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Text } from './title.css';
+import React from 'react';
+import {
+  Text,
+} from './title.css';
 
-const Title = ({ children, as = 'span', size }) => {
-  return (
-    <Text as={as} size={size}>
-      {children}
-    </Text>
-  );
-};
-
+const Title = ({children, as = 'span', size}) => <Text as={as} size={size}>
+  {children}
+</Text>;
 Title.propTypes = {
-  children: PropTypes.string.isRequired,
   as: PropTypes.string,
+  children: PropTypes.string.isRequired,
   size: PropTypes.oneOf(['large']),
 };
 

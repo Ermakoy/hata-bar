@@ -1,44 +1,9 @@
-import styled, { keyframes, css } from 'styled-components';
-import { Box } from 'rendition';
-const rainbow = keyframes`
-  100%,0%{
-			background-color: ${p =>
-        p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
-  }
-  8%{
-    background-color: rgb(255,127,0);
-  }
-  16%{
-    background-color: rgb(255,255,0);
-  }
-  25%{
-    background-color: rgb(127,255,0);
-  }
-  33%{
-    background-color: rgb(0,255,0);
-  }
-  41%{
-    background-color: rgb(0,255,127);
-  }
-  50%{
-    background-color: rgb(0,255,255);
-  }
-  58%{
-    background-color: rgb(0,127,255);
-  }
-  66%{
-    background-color: rgb(0,0,255);
-  }
-  75%{
-    background-color: rgb(127,0,255);
-  }
-  83%{
-    background-color: rgb(255,0,255);
-  }
-  91%{
-    background-color: rgb(255,0,127);
-  }
-`;
+import {
+  Box,
+} from 'rendition';
+import styled, {
+  keyframes, css,
+} from 'styled-components';
 
 const grayscale = keyframes`
   100%,0%{
@@ -72,21 +37,18 @@ export const Week = styled(Box)`
   position: relative;
   border-radius: 10px;
   overflow: hidden;
-  display: ${p => (p.passed ? 'inline-flex' : 'inline-block')};
+  display: ${(p) => (p.passed ? 'inline-flex' : 'inline-block')};
   width: 35px;
   height: 35px;
   margin-right: 10px;
-  ${p =>
-    !p.passed
-      ? css`
-          background-color: ${p =>
-            p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
-        `
-      : ''}
-  ${p =>
-    p.isLoading
-      ? css`
+  ${(p) => (!p.passed ?
+      css`
+          background-color: ${(p) => p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
+        ` :
+      '')}
+  ${(p) => (p.isLoading ?
+      css`
           animation: ${grayscale} 2s linear infinite;
-        `
-      : ''}
+        ` :
+      '')}
 `;

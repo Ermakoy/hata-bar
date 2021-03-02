@@ -1,7 +1,8 @@
 import wretch from 'wretch';
 
 const rawCoords = [
-  { adress: 'Санкт-Петербург, ул. Казанская, 10', title: 'Кафе «Samadeva»' },
+  {adress: 'Санкт-Петербург, ул. Казанская, 10',
+    title: 'Кафе «Samadeva»'},
   {
     adress: 'Санкт-Петербург, ул. Думская ул. 5/22, кв. 68',
     title: 'Кафе «Дядя Фади»',
@@ -12,64 +13,60 @@ const rawCoords = [
   },
   {
     adress: 'Санкт-Петербург, ул.Марата д.74',
-    title: 'Lazy Vegan',
     description: 'Вход через арку, код 239#',
+    title: 'Lazy Vegan',
   },
   {
     adress: 'Санкт-Петербург, Лиговский проспект, 50',
     title: 'Veggie box food&bakery',
   },
   {
-    title: 'Ресторан «RA Family»',
     adress: 'Санкт-Петербург, Кузнечный пер. 6',
+    title: 'Ресторан «RA Family»',
   },
-  { title: '"Кафе-бистро"', adress: 'Санкт-Петербург, улица Марата, 23' },
+  {adress: 'Санкт-Петербург, улица Марата, 23',
+    title: '"Кафе-бистро"'},
   {
-    title: 'Индийское вегетарианское кафе ЛАОР',
     adress: 'Санкт-Петербург, Прачечный пер. д.10',
+    title: 'Индийское вегетарианское кафе ЛАОР',
   },
   {
-    title: 'БобКульт',
     adress: 'Санкт-Петербург, 7-ая линия В.О, д.40',
+    title: 'БобКульт',
   },
   {
-    title: 'Кафе & Арт пространство «Ауровилль»',
     adress: 'ул.Радищева 5',
+    title: 'Кафе & Арт пространство «Ауровилль»',
   },
 ];
 
-export const getVegagoPlaces = () =>
-  wretch('https://vegago.ru/cafe/')
-    .options({ credentials: 'include', mode: 'cors' })
-    .query({ ymJSON: 1 })
-    .get()
-    .json();
+export const getVegagoPlaces = () => wretch('https://vegago.ru/cafe/')
+  .options({credentials: 'include',
+    mode: 'cors'})
+  .query({ymJSON: 1})
+  .get()
+  .json();
 
 const baseRequest = wretch('https://geocode-maps.yandex.ru/1.x/').query({
   apikey: 'a37ce737-cfc2-4b5c-b93a-a0b0b21800cd',
   format: 'json',
 });
 
-const getCoords = () =>
-  Promise.all(
-    rawCoords.map(place =>
-      baseRequest
-        .query({ geocode: place.adress })
-        .get()
-        .json()
-        .then(({ response }) =>
-          response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(
-            ' '
-          )
-        )
-        .then(([longitude, latitude]) => ({
-          ...place,
-          coords: {
-            latitude: Number(latitude),
-            longitude: Number(longitude),
-          },
-        }))
-    )
-  );
+const getCoords = () => Promise.all(
+  rawCoords.map((place) => baseRequest
+    .query({geocode: place.adress})
+    .get()
+    .json()
+    .then(({response}) => response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(
+      ' ',
+    ))
+    .then(([longitude, latitude]) => ({
+      ...place,
+      coords: {
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      },
+    }))),
+);
 
 export default getCoords;

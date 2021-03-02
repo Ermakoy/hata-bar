@@ -1,39 +1,27 @@
-import { useMemo } from 'react';
-import { dropRight, range } from 'lodash';
-import { getMonth, eachDayOfInterval, getYear } from 'date-fns';
-import { getDaysInMonth, eachYearOfInterval } from 'date-fns';
+import {
+  eachDayOfInterval, getMonth, getYear,
+} from 'date-fns';
+import {
+  groupBy,
+} from 'lodash';
+import {
+  useMemo,
+} from 'react';
 
-export const START_YEAR = 2020;
+export const START_YEAR = 2_020;
 
-const getPrevYears = (startYear = START_YEAR) =>
-  dropRight(
-    eachYearOfInterval({
-      start: new Date(startYear, 0, 1),
-      end: new Date(),
-    }).map(getYear)
+export const useDays = (startYear) => useMemo(() => {
+  const start_year = startYear || START_YEAR;
+  const allDays = eachDayOfInterval({
+    end: Date.now(),
+    start: new Date(start_year, 0, 1),
+  });
+  const daysByYear = groupBy(allDays, getYear);
+
+  return Object.fromEntries(
+    Object.entries(daysByYear).map(([year, days]) => [
+      year,
+      Object.values(groupBy(days, getMonth)).sort(([a], [b]) => a - b),
+    ]),
   );
-
-const getFullMonths = (monthCount, year = START_YEAR) =>
-  range(monthCount).map(monthNumber =>
-    range(getDaysInMonth(new Date(year, monthNumber))).map(
-      daysNumber => new Date(year, monthNumber, daysNumber + 1)
-    )
-  );
-
-export const useDays = (startYear = START_YEAR) =>
-  useMemo(() => {
-    const pastYears = getPrevYears();
-    const today = new Date();
-    return {
-      ...pastYears.reduce(
-        (acc, val) => ({ ...acc, [val]: getFullMonths(12, val) }),
-        {}
-      ),
-      [getYear(today)]: getFullMonths(getMonth(today), startYear).concat([
-        eachDayOfInterval({
-          start: new Date(getYear(today), getMonth(today), 1),
-          end: today,
-        }),
-      ]),
-    };
-  }, [startYear]);
+}, [startYear]);

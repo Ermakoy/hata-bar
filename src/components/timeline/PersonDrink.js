@@ -8,5 +8,5 @@ const COLOR_MAP = {
 export const PersonDrink = styled.div`
   width: 100%;
   height: 100%;
-  background-color: ${p => COLOR_MAP[p.name.toLowerCase()]};
+  background-color: ${(p) => COLOR_MAP[p.name.toLowerCase()]};
 `;

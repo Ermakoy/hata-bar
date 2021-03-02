@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, {
+  Component,
+} from 'react';
 
 let io;
 const listeners = [];
 
-function getIO(rootMargin = '-50px') {
+function getIO (rootMargin = '-50px') {
   if (
     typeof io === 'undefined' &&
     typeof window !== 'undefined' &&
     window.IntersectionObserver
   ) {
     io = new window.IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          listeners.forEach(l => {
+      (entries) => {
+        entries.forEach((entry) => {
+          listeners.forEach((l) => {
             if (l[0] === entry.target) {
               // Edge doesn't currently support isIntersecting, so also test for an intersectionRatio > 0
               if (entry.isIntersecting || entry.intersectionRatio > 0) {
@@ -29,33 +31,34 @@ function getIO(rootMargin = '-50px') {
           });
         });
       },
-      { rootMargin }
+      {rootMargin},
     );
   }
 
   return io;
 }
 
-const listenToIntersections = (el, cb, rm) => {
+const listenToIntersections = (element, callback, rm) => {
   const io = getIO(rm);
-  io.observe(el);
-  listeners.push([el, cb]);
+  io.observe(element);
+  listeners.push([element, callback]);
+
   return io;
 };
 
 export default class IO extends Component {
-  constructor() {
+  constructor () {
     super();
 
     // Always not visible while server rendering.
     this.state = {
-      isVisible: false,
       hasBeenVisible: false,
       IOSupported: false,
+      isVisible: false,
     };
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     // Default values
     let isVisible = true;
     let hasBeenVisible = true;
@@ -78,48 +81,50 @@ export default class IO extends Component {
 
     this.setState(
       {
-        isVisible,
         hasBeenVisible,
         IOSupported,
+        isVisible,
       },
-      this.listenToIntersections
+      this.listenToIntersections,
     );
   }
 
   listenToIntersections = () => {
     this.io = listenToIntersections(
       this.ref,
-      isVisible => {
-        this.setState(state => {
+      (isVisible) => {
+        this.setState((state) => {
           let newState = {};
 
           if (!state.hasBeenVisible && isVisible) {
-            newState = { hasBeenVisible: true };
+            newState = {hasBeenVisible: true};
           }
 
-          return { isVisible, ...newState };
+          return {isVisible,
+            ...newState};
         });
       },
-      this.props.rootMargin
+      this.props.rootMargin,
     );
   };
 
-  handleRef = ref => {
+  handleRef = (ref) => {
     if (ref) {
       this.ref = ref;
     }
   };
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.io.disconnect();
   }
 
-  render() {
-    const { isVisible, hasBeenVisible } = this.state;
+  render () {
+    const {isVisible, hasBeenVisible} = this.state;
 
     return (
       <div ref={this.handleRef}>
-        {this.props.children({ isVisible, hasBeenVisible })}
+        {this.props.children({hasBeenVisible,
+          isVisible})}
       </div>
     );
   }

@@ -1,5 +1,7 @@
+import {
+  Link,
+} from 'gatsby';
 import React from 'react';
-import { Link } from 'gatsby';
 import styled from 'styled-components';
 
 const StyledLink = styled(Link)`
@@ -36,12 +38,9 @@ const StyledLink = styled(Link)`
   }
 `;
 
-export const NavLink = ({ children, to }) => (
-  <StyledLink to={to} activeClassName="active">
-    {children}
-  </StyledLink>
-);
-
+export const NavLink = ({children, to}) => <StyledLink activeClassName='active' to={to}>
+  {children}
+</StyledLink>;
 export const NavContainer = styled.nav`
   padding-top: 0.5em;
   padding-bottom: 0.5em;
