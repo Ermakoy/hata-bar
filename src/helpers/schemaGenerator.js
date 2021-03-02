@@ -11,13 +11,13 @@ export default ({
 }) => {
   const isSubPage = pageTitle && location.pathname !== '/';
 
-  let schema = [
+  const schema = [
     {
       '@context': 'http://schema.org',
       '@type': 'WebSite',
-      url: canonical,
-      name: pageTitle || siteTitle,
       alternateName: pageTitleFull,
+      name: pageTitle || siteTitle,
+      url: canonical,
     },
   ];
 
@@ -28,19 +28,19 @@ export default ({
       itemListElement: [
         {
           '@type': 'ListItem',
-          position: 1,
           item: {
             '@id': siteUrl,
             name: siteTitle,
           },
+          position: 1,
         },
         {
           '@type': 'ListItem',
-          position: 2,
           item: {
             '@id': canonical,
             name: pageTitle,
           },
+          position: 2,
         },
       ],
     });
