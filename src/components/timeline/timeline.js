@@ -1,5 +1,10 @@
 import {
   format, getYear, isSameDay,
+  startOfWeek,
+  endOfWeek,
+  add, sub,
+  getMonth,
+  eachDayOfInterval,
 } from 'date-fns';
 import {
   ru,
@@ -7,6 +12,8 @@ import {
 import {
   head,
   countBy,
+  capitalize,
+  last,
 } from 'lodash';
 import React, {
   useCallback, useMemo, useState,
@@ -28,7 +35,7 @@ import {
   Tooltip,
 } from './Tooltip';
 import {
-  Month, Week,
+  Month, Week, Year,
 } from './timeline.css';
 import {
   useBeerDrinkDays,
@@ -57,7 +64,7 @@ function getTooltipContent ({names, day}) {
   return prefix + '\n' + tooltipContent;
 }
 
-function Day ({day, onLongTap, names, isLoading}) {
+function Day ({day, onLongTap, names, isLoading, inactive}) {
   const handleLong = useLongPress(
     () => onLongTap(day),
     {
@@ -66,19 +73,74 @@ function Day ({day, onLongTap, names, isLoading}) {
   );
   const tooltipContent = getTooltipContent({day, names});
 
-  return (
-    <Tooltip content={tooltipContent}>
+  return inactive ? <Week inactive /> :
+  <Tooltip content={tooltipContent}>
       <Week
-        {...handleLong}
-        isLoading={isLoading}
-        passed={Boolean(names)}
+      {...handleLong}
+      isLoading={isLoading}
+      passed={Boolean(names)}
       >
-        {names?.map((name) => <PersonDrink
+      {names?.map((name) => <PersonDrink
           key={name}
           name={name}
         />)}
-      </Week>
-    </Tooltip>
+    </Week>
+    </Tooltip>;
+}
+
+function leftPadDays (day) {
+  let leftDays;
+
+  try {
+    leftDays = eachDayOfInterval({
+      end: sub(day, {days: 1}),
+      start: startOfWeek(day, {weekStartsOn: 1}),
+    });
+  } catch {
+    leftDays = [];
+  }
+
+  return leftDays;
+}
+
+function rightPadDays (day) {
+  let rightDays;
+
+  try {
+    rightDays = eachDayOfInterval({
+      end: endOfWeek(day, {weekStartsOn: 1}),
+      start: add(day, {days: 1}),
+    });
+  } catch {
+    rightDays = [];
+  }
+
+  return rightDays;
+}
+
+const Span = Txt.span;
+
+function MonthTitle ({monthName, count, markCount, andreyCount}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <>
+      <Span
+        fontSize={3}
+        italic
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseOut={() => setIsHovered(false)}
+        style={{width: 70}}
+      >
+        {capitalize(monthName)}
+      </Span>
+      {isHovered &&
+        <>
+          <Span bold fontSize={2}> Пили {count} раз</Span>
+          <Span bold fontSize={2}> Марк: {markCount}</Span>
+          <Span bold fontSize={2}> Андрей: {andreyCount}</Span>
+        </>}
+    </>
   );
 }
 
@@ -100,9 +162,8 @@ function Timeline () {
     }),
     [],
   );
-  const Span = Txt.span;
   const renderMonth = useCallback(
-    (month, monthNumber) => {
+    (year, month, monthNumber) => {
       const monthName = format(
         new Date(
           START_YEAR,
@@ -113,19 +174,22 @@ function Timeline () {
           locale: ru,
         },
       );
+      const thisMonthDrinks = beerDrinkDays?.filter(({date}) => getYear(date) === Number(year) && getMonth(date) === monthNumber);
+      const {markCount, andreyCount} = thisMonthDrinks?.reduce((accumulator, {name}) => ({
+        andreyCount: accumulator.andreyCount + Number(name.includes('ermakoy')),
+        markCount: accumulator.markCount + Number(name.includes('mark')),
+      }), {andreyCount: 0, markCount: 0}) ?? {};
 
       return (
         <Box key={month.toString()}>
-          <Span
-            fontSize={3}
-            italic
-            style={{width: 70}}
-          >
-            {monthName[0].toUpperCase().concat(monthName.slice(1))}
-          </Span>
-
+          <MonthTitle
+            andreyCount={andreyCount}
+            count={thisMonthDrinks.length}
+            markCount={markCount}
+            monthName={monthName}
+          />
           <Month>
-            {month.map((day) => {
+            {leftPadDays(month[0]).concat(month).concat(rightPadDays(last(month))).map((day) => {
               const matchDay = beerDrinkDays?.find(({date: drinkDay}) => isSameDay(
                 drinkDay,
                 day,
@@ -134,6 +198,7 @@ function Timeline () {
               return (
                 <Day
                   day={day}
+                  inactive={monthNumber !== getMonth(day)}
                   isLoading={isLoading}
                   key={Number(day)}
                   names={matchDay?.name}
@@ -160,33 +225,50 @@ function Timeline () {
     setCurrentYearIndex,
   ] = useState(years.findIndex((year) => new Date().getFullYear() === year));
 
-  return (
-    <>
-      {Object.keys(monthsByYear).length === 1 ?
-        Object.entries(monthsByYear)[0][1].map(renderMonth) :
-        <Tabs
-          activeIndex={currentYearIndex}
-          onActive={setCurrentYearIndex}
-        >
-          {Object.entries(monthsByYear).map(([
+  return <>
+    {Object.keys(monthsByYear).length === 1 ?
+      Object.entries(monthsByYear)[0][1].map(renderMonth) :
+      <Tabs
+        activeIndex={currentYearIndex}
+        onActive={setCurrentYearIndex}
+      >
+        {Object.entries(monthsByYear).map((
+          [
             year,
             months,
-          ]) => <Tab
-            key={year}
-            title={year}
-          >
-            {months.map(renderMonth)}
-          </Tab>)}
-        </Tabs>}
+          ],
+        ) => {
+          const thisYearDrinks = beerDrinkDays?.filter(({date}) => getYear(date) === Number(year));
+          const {markCount, andreyCount} = thisYearDrinks?.reduce((accumulator, {name}) => ({
+            andreyCount: accumulator.andreyCount + Number(name.includes('ermakoy')),
+            markCount: accumulator.markCount + Number(name.includes('mark')),
+          }), {andreyCount: 0, markCount: 0}) ?? {};
 
-      {modalState.show &&
-      <InputModal
-        handleAddDay={handleAddDay}
-        modalState={modalState}
-        setModalState={setModalState}
-      />}
-    </>
-  );
+          return (
+            <Tab
+              key={year}
+              title={year}
+            >
+              <div>
+                <div>В этом году пили {thisYearDrinks.length} раз</div>
+                <div>Андрей: {andreyCount} раз</div>
+                <div>Марк: {markCount} раз</div>
+              </div>
+              <Year>
+                {months.map(renderMonth.bind(this, year))}
+              </Year>
+            </Tab>
+          );
+        })}
+      </Tabs>}
+
+    {modalState.show &&
+    <InputModal
+      handleAddDay={handleAddDay}
+      modalState={modalState}
+      setModalState={setModalState}
+    />}
+  </>;
 }
 
 export default Timeline;

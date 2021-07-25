@@ -1,3 +1,4 @@
+/* eslint-disable filenames/match-regex */
 import {
   Box,
 } from 'rendition';
@@ -7,7 +8,7 @@ import styled, {
 
 const grayscale = keyframes`
   100%,0%{
-			opacity: 1;
+    opacity: 1;
   }
   50% {
     opacity: 0.1;
@@ -15,8 +16,26 @@ const grayscale = keyframes`
 `;
 
 export const Month = styled.div`
-  @media (min-width: 480px) {
-    grid-gap: 2px;
+  display: grid;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  grid-template-columns: repeat(7,max-content);
+  grid-gap: 10px;
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(7,1fr);
+  }
+`;
+
+export const Year = styled.div`
+  max-width: 100vw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(auto-fill,minmax(315px, 1fr));
   }
 `;
 
@@ -40,15 +59,14 @@ export const Week = styled(Box)`
   display: ${(p) => (p.passed ? 'inline-flex' : 'inline-block')};
   width: 35px;
   height: 35px;
-  margin-right: 10px;
   ${(p) => (!p.passed ?
-      css`
-          background-color: ${(p) => p.passed ? p.theme.timelinePassed : 'rgba(0, 0, 0, 0.05)'};
+    css`
+          background-color: ${(p) => p.inactive ? 'transparent' : 'rgba(0, 0, 0, 0.05)'};
         ` :
-      '')}
+    '')}
   ${(p) => (p.isLoading ?
-      css`
+    css`
           animation: ${grayscale} 2s linear infinite;
         ` :
-      '')}
+    '')}
 `;
