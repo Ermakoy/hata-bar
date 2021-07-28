@@ -2,7 +2,7 @@ import {
   format, getYear, isSameDay,
   startOfWeek,
   endOfWeek,
-  add, sub,
+  add, sub, min,
   getMonth,
   eachDayOfInterval,
 } from 'date-fns';
@@ -108,7 +108,7 @@ function rightPadDays (day) {
 
   try {
     rightDays = eachDayOfInterval({
-      end: endOfWeek(day, {weekStartsOn: 1}),
+      end: min(new Date(),endOfWeek(day, {weekStartsOn: 1})),
       start: add(day, {days: 1}),
     });
   } catch {
