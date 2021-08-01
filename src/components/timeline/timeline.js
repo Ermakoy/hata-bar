@@ -137,8 +137,8 @@ function MonthTitle ({monthName, count, markCount, andreyCount}) {
       {isHovered &&
         <>
           <Span bold fontSize={2}> Пили {count} раз</Span>
-          <Span bold fontSize={2}> Марк: {markCount}</Span>
-          <Span bold fontSize={2}> Андрей: {andreyCount}</Span>
+          <Span bold={markCount > andreyCount} fontSize={2}> Марк: {markCount}</Span>
+          <Span bold={andreyCount > markCount} fontSize={2}> Андрей: {andreyCount}</Span>
         </>}
     </>
   );
